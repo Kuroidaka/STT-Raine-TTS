@@ -1,3 +1,4 @@
 # dotenv environment variables file
 .env
 .env.test
+__pycache__

@@ -18,7 +18,7 @@ init()
 API_KEY = os.getenv("OPENAI_API_KEY")
 
 
-def text_to_speech_OpenAI(text):
+def text_to_speech_OpenAI(text, speed):
     client = OpenAI(api_key=API_KEY)
 
     with NamedTemporaryFile(delete=True, suffix=".mp3") as temp_mp3:
@@ -28,14 +28,14 @@ def text_to_speech_OpenAI(text):
             model="tts-1",
             voice="nova",
             input=text,
-            speed=1.5
+            speed=speed
         )
 
         response.stream_to_file(speech_file_path)
         playsound(str(speech_file_path))
         
         
-def text_to_speech_gg(text, lang='vn', slow=False):
+def text_to_speech_gg(text, lang='en', slow=False):
     tts = gTTS(text=text, lang=lang, slow=False)
     temp_file = tempfile.NamedTemporaryFile(delete=True)
     tts.save(temp_file.name)
