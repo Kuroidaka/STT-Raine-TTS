@@ -6,38 +6,18 @@ import os
 import tempfile
 import requests
 from dotenv import load_dotenv
+from colorama import init, Fore
+import tts
+import stt
 
 load_dotenv()
 
-# Initialize recognizer class
-r = sr.Recognizer()
+init()
 
-def record_text():
-    while True:
-    # Reads the audio file
-        with sr.Microphone() as source:
-            print("Start speaking, I'm all ears!")
-
-            r.adjust_for_ambient_noise(source, duration= 0.2)
-            audio_data = r.listen(source)
-            try:
-                # Try to recognize the speech
-                print("You've stopped speaking, let me decode that...")
-                text = r.recognize_google(audio_data)
-                return text
-            except:
-                print("I couldn't understand what you said, boss. Can you repeat that?")
-
-def speak_text(text, lang='en', slow=False):
-    tts = gTTS(text=text, lang=lang, slow=False)
-    temp_file = tempfile.NamedTemporaryFile(delete=True)
-    tts.save(temp_file.name)
-    playsound(temp_file.name)
-    
 while(1):
-    text = record_text()
+    text = stt.record_text()
     origin_url = os.getenv("ORIGIN_URL", "http://localhost:8000")
-    url = f'{origin_url}/api/v1/chatgpt/ask'
+    url = f'{origin_url}/api/v1/chatgpt/ask-for-tts'
     
     headers = {'Content-Type': 'application/json'}
     payload = {
@@ -45,7 +25,7 @@ while(1):
             'content': text,
             'guildId': os.environ['GUILD_ID']
         },
-        'maxTokenEachScript': 400,
+        'maxTokenEachScript': 1000,
         'curUser': {
             'globalName': os.environ['USER_GLOBALNAME'],
             'id': os.environ['USER_ID'],
@@ -55,7 +35,7 @@ while(1):
     response = requests.post(url, headers=headers, json=payload)
 
     if response.status_code == 200:
-        print(response.json()['data'])
-        speak_text(response.json()['data'], 'en-uk')
+        print(f"{Fore.BLACK}==========>", response.json()['data'])
+        tts.text_to_speech_OpenAI(response.json()['data'])
     else:
         print("Oops, no pizza. Let's try again!")
