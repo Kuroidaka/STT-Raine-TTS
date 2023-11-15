@@ -14,9 +14,7 @@ from colorama import init, Fore
 load_dotenv()
 init()
 
-
 API_KEY = os.getenv("OPENAI_API_KEY")
-
 
 def text_to_speech_OpenAI(text, speed):
     client = OpenAI(api_key=API_KEY)

@@ -78,11 +78,9 @@ while(1):
             else:
                 print("Oops, no pizza. Let's try again!")
 
-        # Create threading events
         task1_completed = threading.Event()
         task2_completed = threading.Event()
 
-        # Execute tasks concurrently
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future1 = executor.submit(task1, task1_completed, task2_completed)
             future2 = executor.submit(task2, task1_completed, task2_completed)

@@ -9,12 +9,10 @@ load_dotenv()
 
 init()
 
-# Initialize recognizer class
 r = sr.Recognizer()
 
 def record_text(language):
     while True:
-    # Reads the audio file
         with sr.Microphone() as source:
             print(f"{Fore.CYAN}[+] Start speaking...")
             r.adjust_for_ambient_noise(source, duration= 0.2)
@@ -24,7 +22,7 @@ def record_text(language):
                 with open('language.json') as f: 
                     lang = json.load(f)
                     
-                print(f"{Fore.GREEN}[+] You've stopped speaking, let me decode that... ", lang["languages"].get(language))
+                print(f"{Fore.GREEN}[+] You've stopped speaking, let me decode that...", lang["languages"].get(language))
                 text = r.recognize_google(audio_data, language=lang["languages"].get(language))
                 text = text.lower()
                 return text
