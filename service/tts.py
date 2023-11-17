@@ -1,4 +1,5 @@
 import os
+import tempfile
 from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -9,6 +10,8 @@ from tempfile import TemporaryFile
 import os
 import tempfile
 from colorama import init, Fore
+import pygame
+import time
 
 
 load_dotenv()
@@ -18,9 +21,11 @@ API_KEY = os.getenv("OPENAI_API_KEY")
 
 def text_to_speech_OpenAI(text, speed):
     client = OpenAI(api_key=API_KEY)
+    
+    fd, path = tempfile.mkstemp(suffix=".mp3")
+    with os.fdopen(fd, 'w') as tmp:
 
-    with NamedTemporaryFile(delete=True, suffix=".mp3") as temp_mp3:
-        speech_file_path = temp_mp3.name
+        speech_file_path = path
 
         response = client.audio.speech.create(
             model="tts-1",
@@ -28,10 +33,12 @@ def text_to_speech_OpenAI(text, speed):
             input=text,
             speed=speed
         )
-
         response.stream_to_file(speech_file_path)
-        playsound(str(speech_file_path))
-        
+        print("======str(speech_file_path)", str(speech_file_path))
+        return str(speech_file_path)
+
+def text_to_speech_file(path):
+   playsound(path)
         
 def text_to_speech_gg(text, lang='en', slow=False):
     tts = gTTS(text=text, lang=lang, slow=False)
