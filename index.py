@@ -64,7 +64,7 @@ while(1):
                     'content': text,
                     'guildId': os.environ['GUILD_ID']
                 },
-                'maxTokenEachScript': 400,
+                'maxTokenEachScript': 300,
                 'curUser': {
                     'globalName': os.environ['USER_GLOBALNAME'],
                     'id': os.environ['USER_ID'],
@@ -87,15 +87,15 @@ while(1):
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             future2 = executor.submit(task2)
             
-            time.sleep(7)
+            time.sleep(13)
             if future2.running():
                 future1 = executor.submit(task1)
                 result2 = future2.result()
+                result1 = future1.result()
                 if audio_file_path:
                     playsound(audio_file_path)
                     os.remove(audio_file_path)
             else:
-                print("task 2 completed within 7 seconds")
                 result2 = future2.result()  # Get result of task2 if it's already done
                 if audio_file_path:
                     playsound(audio_file_path)
