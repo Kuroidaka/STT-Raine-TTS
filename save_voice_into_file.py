@@ -32,9 +32,9 @@ def text_to_speech_OpenAI(text, speed, save_path, name):
 
 
 lang = {}
-with open('./assets/voice/fake/fake_res.json') as f: 
+with open('./assets/voice/error/error_res.json') as f: 
     lang = json.load(f)
 
-for i in range(len(lang['jp'])):
-    text_to_speech_OpenAI(lang['jp'][i], 0.9, './assets/voice/fake/jp', f"output{i}")
+for i in range(len(lang['vi'])):
+    text_to_speech_OpenAI(lang['vi'][i], 1.1, './assets/voice/error/vi', f"output{i}")
 

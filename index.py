@@ -36,6 +36,14 @@ def cli_argument():
 args = cli_argument()
 language = "".join(args.language)
 
+def fake_response(path, type):
+     with open(path) as f:
+        fake_res = json.load(f)
+        fake_text_index = utils.get_random_index(fake_res[language])
+        print(fake_text_index)
+        path = f"./assets/voice/{type}/{language}/output{fake_text_index}.mp3"
+        if utils.check_file_path(path):
+            tts.text_to_speech_file(path)
 
 while(1):
     text = stt.record_text(language)
@@ -48,13 +56,7 @@ while(1):
         audio_file_path = None
         # Define your tasks
         def task1():
-            with open('./assets/voice/fake/fake_res.json') as f:
-                fake_res = json.load(f)
-                fake_text_index = utils.get_random_index(fake_res[language])
-                print(fake_text_index)
-                path = f"./assets/voice/fake/{language}/output{fake_text_index}.mp3"
-                if utils.check_file_path(path):
-                    tts.text_to_speech_file(path)
+            fake_response('./assets/voice/fake/fake_res.json', 'fake')
 
         def task2():
             global audio_file_path
@@ -72,16 +74,19 @@ while(1):
                 'lan': language
             }
 
-            response = requests.post(url, headers=headers, json=payload)
+            try:
+                response = requests.post(url, headers=headers, json=payload)
 
-            print('response.status_code', response.status_code)
-            if response.status_code == 200:
-                print(f"{Fore.BLACK}==========>", response.json()['data'])
-                tempSpeech = tts.text_to_speech_OpenAI(response.json()['data'], 1)
-                audio_file_path = os.path.join(tempSpeech)            
-            else:
-                print("Oops, no pizza. Let's try again!")
-        
+                print('response.status_code', response.status_code)
+                if response.status_code == 200:
+                    print(f"{Fore.BLACK}==========>", response.json()['data'])
+                    tempSpeech = tts.text_to_speech_OpenAI(response.json()['data'], 1)
+                    audio_file_path = os.path.join(tempSpeech)            
+                else:
+                   raise Exception("Non-200 status code")
+            except Exception as e:
+                print(f"{Fore.BLACK}==========>", "ERROR OCCUR")
+                fake_response('./assets/voice/error/error_res.json', 'error')
         stop_event = threading.Event()
                
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
