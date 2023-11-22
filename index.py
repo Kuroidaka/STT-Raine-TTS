@@ -80,7 +80,8 @@ while(1):
                 print('response.status_code', response.status_code)
                 if response.status_code == 200:
                     print(f"{Fore.BLACK}==========>", response.json()['data'])
-                    tempSpeech = tts.text_to_speech_OpenAI(response.json()['data'], 1)
+                    # tempSpeech = tts.text_to_speech_OpenAI(response.json()['data'], 1)
+                    tempSpeech = tts.text_to_speech_ell(response.json()['data'])
                     audio_file_path = os.path.join(tempSpeech)            
                 else:
                    raise Exception("Non-200 status code")
